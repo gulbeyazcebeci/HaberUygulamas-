@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Türkiye Haberleri</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 20px; }
+    h1 { text-align: center; }
+    .filters {
+      text-align: center; margin-bottom: 20px;
+    }
+    .filters button {
+      padding: 10px 15px; margin: 5px;
+      background: #007acc; color: white;
+      border: none; border-radius: 5px;
+      cursor: pointer;
+    }
+    .news-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      background: white; padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+    .card img {
+      width: 100%; border-radius: 4px;
+      max-height: 180px; object-fit: cover;
+    }
+    .card h3 { margin: 10px 0 5px; }
+    .card p { font-size: 0.9em; color: #333; }
+    .card a { text-decoration: none; color: #007acc; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>Türkiye'de Haberler</h1>
+
+<div class="filters">
+  <button onclick="filterNews('hepsi')">Tümü</button>
+  <button onclick="filterNews('gündem')">Gündem</button>
+  <button onclick="filterNews('dünya')">Dünya</button>
+  <button onclick="filterNews('ekonomi')">Ekonomi</button>
+  <button onclick="filterNews('teknoloji')">Teknoloji</button>
+  <button onclick="filterNews('magazin')">Magazin</button>
+</div>
+
+<div class="news-container" id="newsContainer"></div>
+
+<script>
+  // Buraya JSON dosyasındaki haberlerden örnek alınarak hazırlanmış veriler yerleştirildi.
+  const news = [
+    {
+      title: "Putin, Kara Kuvvetleri Komutanı’nı görevden aldı!",
+      description: "Rusya Devlet Başkanı Vladimir Putin, yayınladığı kararname ile 70 yaşındaki General Oleg Salyukov'u görevden aldı.",
+      url: "https://www.sabah.com.tr/dunya/putin-kara-kuvvetleri-komutanini-gorevden-aldi-7353312",
+      urlToImage: "https://iasbh.tmgrup.com.tr/e5151a/1200/675/0/0/1920/1080?u=https://isbh.tmgrup.com.tr/sbh/2025/05/15/putin-kara-kuvvetleri-komutanini-gorevden-aldi-1747334356168.jpg",
+      category: "dünya"
+    },
+    {
+      title: "Baykar ile milyar dolarlık anlaşma sonrası sürpriz hamle",
+      description: "Suudi Arabistan, ABD'den 200 adet SİHA almak için görüşmelere başladı.",
+      url: "https://www.haber7.com/dunya/haber/3532640",
+      urlToImage: "https://i20.haber7.net/resize/1280x720/haber/haber7/bigmanset/2025/21/baykar_ile_yapilan_milyar_dolarlik_anlasma_sonrasi_surpriz_hamle_200_adet_istiyorlar_1747925690_469.jpg",
+      category: "ekonomi"
+    },
+    {
+      title: "Napolyon’un şapkası 22 milyon liraya satışa çıktı",
+      description: "Tarihi eserler Sotheby’s Paris’te açık artırmaya sunuluyor.",
+      url: "https://www.sabah.com.tr/dunya/napolyonun-sapkasi-22-milyon-liraya-satisa-cikti-7367412",
+      urlToImage: "https://iasbh.tmgrup.com.tr/99816f/1200/675/0/127/1295/856?u=https://isbh.tmgrup.com.tr/sbh/2025/06/10/1749504885386.jpeg",
+      category: "dünya"
+    },
+    {
+      title: "Rusya: İstanbul'daki anlaşmayı uygulamaya hazırız",
+      description: "Rus heyeti Türkiye arabuluculuğundaki süreci uygulamak istiyor.",
+      url: "https://www.haber7.com/dunya/haber/3537048",
+      urlToImage: "https://i12.haber7.net//haber/haber7/og_image/2025/23/rusya_istanbuldaki_anlasmayi_uygulamaya_haziriz_1749382830_4895.jpg",
+      category: "gündem"
+    },
+    {
+      title: "Enerjik bir yaz parçası",
+      description: "Mert Demir’in yeni teklisi müzik listelerinde yükseliyor.",
+      url: "https://www.sabah.com.tr/yazarlar/gunaydin/hakan-uc/2025/06/11/enerjik-bir-yaz-parcasi",
+      urlToImage: "https://iasbh.tmgrup.com.tr/f9f755/0/0/0/0/338/497?u=https://isbh.tmgrup.com.tr/sbh/2025/06/10/enerjik-bir-yaz-parcasi-1749567596790.jpeg",
+      category: "magazin"
+    },
+    {
+      title: "General Motors'un yeni pili LFP pilleri sollayacak",
+      description: "Yeni geliştirilen piller, enerji yoğunluğu ve fiyat avantajı sunuyor.",
+      url: "https://www.donanimhaber.com/general-motors-un-yeni-pili-lfp-pillerin-koltugunu-sallayabilir--191340",
+      urlToImage: "https://www.donanimhaber.com/images/images/haber/191340/src_340x1912xgeneral-motors-un-yeni-pili-lfp-pillerin-koltugunu-sallayabilir.jpg",
+      category: "teknoloji"
+    }
+    // Diğer haberleri de buraya ekleyebilirim, istersen devamını getiririm.
+  ];
+
+  function filterNews(cat) {
+    const container = document.getElementById("newsContainer");
+    container.innerHTML = "";
+    const filtered = cat === "hepsi" ? news : news.filter(n => n.category === cat);
+
+    if (filtered.length === 0) {
+      container.innerHTML = "<p>Bu kategoride haber bulunamadı.</p>";
+      return;
+    }
+
+    filtered.forEach(n => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${n.urlToImage}" alt="Haber görseli">
+        <h3>${n.title}</h3>
+        <p>${n.description}</p>
+        <a href="${n.url}" target="_blank">Haberi Oku</a>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  filterNews("hepsi");
+</script>
+
+</body>
+</html>
